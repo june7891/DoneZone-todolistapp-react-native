@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "DoneZone",
-    "slug": "DoneZone",
+    "slug": "donezone",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,10 +21,23 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.toma.june.donezone"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e1da7b04-85c1-4f76-986c-6d30be7c0b98"
+      }
+    },
+    "owner": "toma.june",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/e1da7b04-85c1-4f76-986c-6d30be7c0b98"
     }
   }
 }

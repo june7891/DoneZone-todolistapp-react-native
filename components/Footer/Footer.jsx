@@ -9,7 +9,7 @@ export default function Footer({ selectedTabName, onPress, todoList }) {
     return acc;
   }, {all: todoList.length, inProgress: 0, done:0});
 
-  console.log(countByStatus);
+
   
 
   

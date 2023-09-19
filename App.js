@@ -3,17 +3,58 @@ import { Alert, ScrollView, Text, View } from "react-native";
 import { s } from "./App.style.js";
 import Header from "./components/Header/Header.jsx";
 import CardTodo from "./components/CardTodo/CardTodo.jsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Footer from "./components/Footer/Footer.jsx";
 import { ButtonAdd } from "./components/ButtonAdd/ButtonAdd.jsx";
 import Dialog from "react-native-dialog";
-import uuid from 'react-native-uuid'
+import uuid from "react-native-uuid";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+let isFirstRender = true;
+let isLoadUpdate = false;
 
 export default function App() {
   const [selectedTabName, setSelectedTabName] = useState("all");
   const [todoList, setTodoList] = useState([]);
   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
+
+
+  useEffect(() => {
+    loadTodoList();
+  }, [])
+
+  useEffect(() =>{
+    if(isLoadUpdate){
+      isLoadUpdate = false;
+    }else{
+    if(!isFirstRender){
+      saveTodoList();
+    }else{
+      isFirstRender = false;
+    }
+  }
+  }, [todoList])
+
+  async function saveTodoList() {
+    try {
+      await AsyncStorage.setItem("@todolist", JSON.stringify(todoList));
+    } catch (error) {
+      alert("erreur" + error);
+    }
+  }
+
+  async function loadTodoList(){
+    try {
+      const stringifiedTodoList = await AsyncStorage.getItem("@todolist");
+      if( stringifiedTodoList !== null){
+        const parsedTodoList = JSON.parse(stringifiedTodoList);
+        isLoadUpdate = true;
+        setTodoList(parsedTodoList);
+      }
+    } catch (error) {
+      alert("erreur" + error); 
+    }
+  }
 
   function getFilteredList() {
     switch (selectedTabName) {
@@ -68,7 +109,7 @@ export default function App() {
     setIsAddDialogVisible(true);
   }
 
-  function addTodo(){
+  function addTodo() {
     const newTodo = {
       id: uuid.v4(),
       title: inputValue,
@@ -97,12 +138,19 @@ export default function App() {
         selectedTabName={selectedTabName}
       />
 
-      <Dialog.Container visible={isAddDialogVisible} onBackdropPress={() => setIsAddDialogVisible(false)}>
+      <Dialog.Container
+        visible={isAddDialogVisible}
+        onBackdropPress={() => setIsAddDialogVisible(false)}
+      >
         <Dialog.Title>Créer une tâche</Dialog.Title>
         <Dialog.Description>Nom de la nouvelle tâche</Dialog.Description>
         <Dialog.Input onChangeText={setInputValue} />
 
-        <Dialog.Button disabled={inputValue.trim().length === 0} label="Créer" onPress={addTodo} />
+        <Dialog.Button
+          disabled={inputValue.trim().length === 0}
+          label="Créer"
+          onPress={addTodo}
+        />
       </Dialog.Container>
     </>
   );
